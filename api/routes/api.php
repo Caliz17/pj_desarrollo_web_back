@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// mostarar un mensaje de bienvenida y que diga api version 1.0 en el inicio
+Route::get('/', function () {
+    return response()->json(['message' => 'API version 1.0']);
+});
