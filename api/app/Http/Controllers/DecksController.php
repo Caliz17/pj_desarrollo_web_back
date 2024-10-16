@@ -9,6 +9,21 @@ use Illuminate\Support\Facades\Validator;
 
 class DecksController extends Controller
 {
+    /**
+     * Recuperar un mazo por ID de jugador y ID de mazo.
+     *
+     * Esta función obtiene un mazo asociado con un jugador específico y un ID de mazo.
+     * Devuelve una respuesta JSON que contiene la información del mazo o un mensaje de error.
+     *
+     * @param int $playerId El ID del jugador.
+     * @param int $deckId El ID del mazo.
+     * @return \Illuminate\Http\JsonResponse La respuesta que contiene la información del mazo o un mensaje de error.
+     *
+     * Posibles estados de respuesta:
+     * - 200: Mazo obtenido exitosamente.
+     * - 404: Mazo no encontrado.
+     * - 400: Ocurrió un error al obtener el mazo.
+     */
     public function getDeckByPlayer($playerId, $deckId)
     {
         $response = [
@@ -38,6 +53,25 @@ class DecksController extends Controller
         return response()->json($response, $response['statusCode']);
     }
 
+    /**
+     * Crea un nuevo mazo para un jugador específico.
+     *
+     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos del mazo.
+     * @param int $playerId El ID del jugador para el cual se está creando el mazo.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON que indica el resultado de la operación.
+     *
+     * Reglas de validación:
+     * - id_card_#: requerido
+     * - id_deck_player: requerido
+     * - user_id: requerido
+     *
+     * La función valida los datos de entrada y verifica si el jugador ya tiene el máximo de 4 mazos.
+     * Si la validación falla, devuelve un error de validación.
+     * Si el jugador ya tiene 4 mazos, devuelve un mensaje de error.
+     * Si todo es correcto, guarda el nuevo mazo en la base de datos y devuelve una respuesta de éxito.
+     *
+     * En caso de una excepción, devuelve un mensaje de error.
+     */
     public function createDeck(Request $request, $playerId)
     {
         $response = [
@@ -71,7 +105,11 @@ class DecksController extends Controller
 
                 // Limitar a un máximo de 4 mazos por jugador
                 if ($existingDecksCount >= 4) {
-                    return response()->json(['message' => 'El jugador ya tiene el máximo de 4 mazos.'], 400);
+                    $response = [
+                                'statusCode' => 400,
+                                'status' => 'error',
+                                'message' => 'El jugador ya tiene el máximo de 4 mazos.'
+                    ];
                 }
                 $deck = new Deck();
                 $deck->id_card_1 = $request->id_card_1;
@@ -97,6 +135,26 @@ class DecksController extends Controller
 
     }
 
+    /**
+     * Actualiza un mazo existente para un jugador específico.
+     *
+     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos del mazo.
+     * @param int $playerId El ID del jugador propietario del mazo.
+     * @param int $deckId El ID del mazo que se va a actualizar.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON que indica el resultado de la operación.
+     *
+     * Reglas de validación:
+     * - id_card_#: requerido
+     * - id_deck_player: requerido
+     * - user_id: requerido
+     *
+     * La función valida los datos de entrada y verifica si el mazo existe.
+     * Si la validación falla, devuelve un error de validación.
+     * Si el mazo no se encuentra, devuelve un mensaje de error.
+     * Si todo es correcto, actualiza el mazo en la base de datos y devuelve una respuesta de éxito.
+     *
+     * En caso de una excepción, devuelve un mensaje de error.
+     */
     public function updateDeck(Request $request, $playerId, $deckId)
     {
         $response = [
