@@ -14,8 +14,6 @@ return new class () extends Migration {
             $table->integer('level')->nullable();
             $table->integer('trophies')->nullable();
             $table->unsignedBigInteger('clan_id')->nullable();
-
-            $table->foreign('clan_id')->references('id')->on('tb_clans')->onDelete('cascade');
         });
     }
 

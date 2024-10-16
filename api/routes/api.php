@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CardsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DecksController;
 
 // Mostrar un mensaje de bienvenida y que diga API version 1.0 en el inicio
 Route::get('/', function () {
@@ -22,6 +23,13 @@ Route::group(['middleware' => 'api'], function ($routes) {
             Route::post('/', [CardsController::class, 'store']);
             Route::get('/{id}', [CardsController::class, 'show']);
             Route::put('/{id}', [CardsController::class, 'update']);
+        });
+
+        Route::prefix('decks')->group(function () {
+            Route::get('/{deckId}/players/{playerId}', [DecksController::class, 'getDeckByPlayer']);
+            Route::post('/players/{playerId}', [DecksController::class, 'createDeck']);
+            Route::put('/{deckId}/players/{playerId}', [DecksController::class, 'updateDeck']);
+
         });
     });
 });
