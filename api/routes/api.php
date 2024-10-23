@@ -31,5 +31,11 @@ Route::group(['middleware' => 'api'], function ($routes) {
             Route::put('/{deckId}/players/{playerId}', [DecksController::class, 'updateDeck']);
 
         });
+
+        Route::prefix('matches')->group(function () {
+            Route::get('/players/{playerId}', [DecksController::class, 'getMatchesByPlayer']);
+            Route::post('/players/{playerId}', [DecksController::class, 'createMatch']);
+            Route::put('/{matchId}/players/{playerId}', [DecksController::class, 'updateMatch']);
+        });
     });
 });

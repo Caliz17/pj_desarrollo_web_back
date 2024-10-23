@@ -10,9 +10,38 @@ use Illuminate\Support\Facades\Validator;
 class CardsController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @OA\Schema(
+     *     schema="Card",
+     *     type="object",
+     *     required={"id", "name", "description", "stroke", "defense"},
+     *     @OA\Property(property="id", type="integer", example=1),
+     *     @OA\Property(property="name", type="string", example="Card Name"),
+     *     @OA\Property(property="description", type="string", example="Card Description"),
+     *     @OA\Property(property="stroke", type="integer", example=10),
+     *     @OA\Property(property="defense", type="integer", example=5)
+     * )
+     */
+
+    /**
+     * @OA\Get(
+     *     path="/api/cards",
+     *     summary="Obtener lista de cartas",
+     *     tags={"Cartas"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cartas obtenidas exitosamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="statusCode", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Ocurrió un error al obtener las cartas"
+     *     )
+     * )
      */
     public function index()
     {
@@ -23,8 +52,7 @@ class CardsController extends Controller
             'statusCode' => 200
         ];
         try {
-
-            $cards = Card::select('id', 'name', 'description', 'stroke', 'defense')->get();
+            $cards = Card::select('id', 'name', 'description', 'stroke', 'defense')->get()->toArray();
             $response['cards'] = $cards;
         } catch (Exception $e) {
             $response = [
@@ -32,17 +60,35 @@ class CardsController extends Controller
                 'status' => 'error',
                 'message' => 'An error occurred while fetching the cards'
             ];
-
         }
         return response()->json($response, $response['statusCode']);
     }
 
 
+
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @OA\Post(
+     *     path="/api/cards",
+     *     summary="Crear una nueva carta",
+     *     tags={"Cartas"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="description", type="string"),
+     *             @OA\Property(property="stroke", type="integer"),
+     *             @OA\Property(property="defense", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Carta creada exitosamente"
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error de validación u otro problema"
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -83,6 +129,27 @@ class CardsController extends Controller
         return response()->json($response, $response['statusCode']);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/cards/{id}",
+     *     summary="Obtener una carta por ID",
+     *     tags={"Cartas"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Carta obtenida exitosamente",
+     *            ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Carta no encontrada"
+     *     )
+     * )
+     */
     public function show($id)
     {
         $response = [
@@ -113,10 +180,34 @@ class CardsController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Put(
+     *     path="/api/cards/{id}",
+     *     summary="Actualizar una carta",
+     *     tags={"Cartas"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="description", type="string"),
+     *             @OA\Property(property="stroke", type="integer"),
+     *             @OA\Property(property="defense", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Carta actualizada exitosamente"
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error al actualizar la carta"
+     *     )
+     * )
      */
     public function update(Request $request, $id)
     {

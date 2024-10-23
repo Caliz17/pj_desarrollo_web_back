@@ -10,19 +10,48 @@ use Illuminate\Support\Facades\Validator;
 class DecksController extends Controller
 {
     /**
-     * Recuperar un mazo por ID de jugador y ID de mazo.
+     * @OA\Get(
+     *     path="/api/decks/{playerId}/{deckId}",
+     *     summary="Recuperar un mazo por ID de jugador y ID de mazo",
+     *     tags={"Mazos"},
+     *     @OA\Parameter(
+     *         name="playerId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Parameter(
+     *         name="deckId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Mazo obtenido exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Deck fetched successfully"),
      *
-     * Esta función obtiene un mazo asociado con un jugador específico y un ID de mazo.
-     * Devuelve una respuesta JSON que contiene la información del mazo o un mensaje de error.
-     *
-     * @param int $playerId El ID del jugador.
-     * @param int $deckId El ID del mazo.
-     * @return \Illuminate\Http\JsonResponse La respuesta que contiene la información del mazo o un mensaje de error.
-     *
-     * Posibles estados de respuesta:
-     * - 200: Mazo obtenido exitosamente.
-     * - 404: Mazo no encontrado.
-     * - 400: Ocurrió un error al obtener el mazo.
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Mazo no encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Deck not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Ocurrió un error al obtener el mazo",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="An error occurred while fetching the deck")
+     *         )
+     *     )
+     * )
      */
     public function getDeckByPlayer($playerId, $deckId)
     {
@@ -54,23 +83,49 @@ class DecksController extends Controller
     }
 
     /**
-     * Crea un nuevo mazo para un jugador específico.
-     *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos del mazo.
-     * @param int $playerId El ID del jugador para el cual se está creando el mazo.
-     * @return \Illuminate\Http\JsonResponse La respuesta JSON que indica el resultado de la operación.
-     *
-     * Reglas de validación:
-     * - id_card_#: requerido
-     * - id_deck_player: requerido
-     * - user_id: requerido
-     *
-     * La función valida los datos de entrada y verifica si el jugador ya tiene el máximo de 4 mazos.
-     * Si la validación falla, devuelve un error de validación.
-     * Si el jugador ya tiene 4 mazos, devuelve un mensaje de error.
-     * Si todo es correcto, guarda el nuevo mazo en la base de datos y devuelve una respuesta de éxito.
-     *
-     * En caso de una excepción, devuelve un mensaje de error.
+     * @OA\Post(
+     *     path="/api/decks/{playerId}",
+     *     summary="Crea un nuevo mazo para un jugador específico",
+     *     tags={"Mazos"},
+     *     @OA\Parameter(
+     *         name="playerId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id_card_1", type="integer", example=1),
+     *             @OA\Property(property="id_card_2", type="integer", example=2),
+     *             @OA\Property(property="id_card_3", type="integer", example=3),
+     *             @OA\Property(property="id_card_4", type="integer", example=4),
+     *             @OA\Property(property="id_card_5", type="integer", example=5),
+     *             @OA\Property(property="id_card_6", type="integer", example=6),
+     *             @OA\Property(property="id_card_7", type="integer", example=7),
+     *             @OA\Property(property="id_card_8", type="integer", example=8),
+     *             @OA\Property(property="id_deck_player", type="string", example="Deck1"),
+     *             @OA\Property(property="user_id", type="integer", example=1)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Mazo creado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Mazo creado exitosamente")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error de validación o al crear el mazo",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Error de validación"),
+     *             @OA\Property(property="errors", type="object", example={"id_card_1": "Este campo es obligatorio"})
+     *         )
+     *     )
+     * )
      */
     public function createDeck(Request $request, $playerId)
     {
@@ -136,24 +191,63 @@ class DecksController extends Controller
     }
 
     /**
-     * Actualiza un mazo existente para un jugador específico.
-     *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos del mazo.
-     * @param int $playerId El ID del jugador propietario del mazo.
-     * @param int $deckId El ID del mazo que se va a actualizar.
-     * @return \Illuminate\Http\JsonResponse La respuesta JSON que indica el resultado de la operación.
-     *
-     * Reglas de validación:
-     * - id_card_#: requerido
-     * - id_deck_player: requerido
-     * - user_id: requerido
-     *
-     * La función valida los datos de entrada y verifica si el mazo existe.
-     * Si la validación falla, devuelve un error de validación.
-     * Si el mazo no se encuentra, devuelve un mensaje de error.
-     * Si todo es correcto, actualiza el mazo en la base de datos y devuelve una respuesta de éxito.
-     *
-     * En caso de una excepción, devuelve un mensaje de error.
+     * @OA\Put(
+     *     path="/api/decks/{playerId}/{deckId}",
+     *     summary="Actualiza un mazo existente para un jugador específico",
+     *     tags={"Mazos"},
+     *     @OA\Parameter(
+     *         name="playerId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Parameter(
+     *         name="deckId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id_card_1", type="integer", example=1),
+     *             @OA\Property(property="id_card_2", type="integer", example=2),
+     *             @OA\Property(property="id_card_3", type="integer", example=3),
+     *             @OA\Property(property="id_card_4", type="integer", example=4),
+     *             @OA\Property(property="id_card_5", type="integer", example=5),
+     *             @OA\Property(property="id_card_6", type="integer", example=6),
+     *             @OA\Property(property="id_card_7", type="integer", example=7),
+     *             @OA\Property(property="id_card_8", type="integer", example=8),
+     *             @OA\Property(property="id_deck_player", type="string", example="Deck1", description="Nombre del mazo"),
+     *             @OA\Property(property="user_id", type="integer", example=1, description="ID del usuario propietario del mazo")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Mazo actualizado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Mazo actualizado exitosamente")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error de validación o al actualizar el mazo",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Error de validación"),
+     *             @OA\Property(property="errors", type="object", example={"id_card_1": "Este campo es obligatorio"})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="El mazo no se encontró",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="El mazo con el ID especificado no se encontró.")
+     *         )
+     *     )
+     * )
      */
     public function updateDeck(Request $request, $playerId, $deckId)
     {
