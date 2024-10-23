@@ -22,47 +22,60 @@ class CardsController extends Controller
      * )
      */
 
-    /**
-     * @OA\Get(
-     *     path="/api/cards",
-     *     summary="Obtener lista de cartas",
-     *     tags={"Cartas"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Cartas obtenidas exitosamente",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="string"),
-     *             @OA\Property(property="message", type="string"),
-     *             @OA\Property(property="statusCode", type="integer")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Ocurrió un error al obtener las cartas"
-     *     )
-     * )
-     */
-    public function index()
-    {
+/**
+ * @OA\Info(title="Tu API", version="1.0.0")
+ * @OA\SecurityScheme(
+ *     securityScheme="Bearer",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT"
+ * )
+ */
+
+/**
+ * @OA\Get(
+ *     path="/api/cards",
+ *     summary="Obtener lista de cartas",
+ *     tags={"Cartas"},
+ *     security={{"Bearer": {}}},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Cartas obtenidas exitosamente",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="string"),
+ *             @OA\Property(property="message", type="string"),
+ *             @OA\Property(property="statusCode", type="integer")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Ocurrió un error al obtener las cartas"
+ *     )
+ * )
+ */
+public function index()
+{
+    $response = [
+        'status' => 'success',
+        'message' => 'Cards fetched successfully',
+        'cards' => [],
+        'statusCode' => 200
+    ];
+    try {
+        $cards = Card::select('id', 'name', 'description', 'stroke', 'defense')->get()->toArray();
+        $response['cards'] = $cards;
+    } catch (Exception $e) {
         $response = [
-            'status' => 'success',
-            'message' => 'Cards fetched successfully',
-            'cards' => [],
-            'statusCode' => 200
+            'statusCode' => 400,
+            'status' => 'error',
+            'message' => 'An error occurred while fetching the cards'
         ];
-        try {
-            $cards = Card::select('id', 'name', 'description', 'stroke', 'defense')->get()->toArray();
-            $response['cards'] = $cards;
-        } catch (Exception $e) {
-            $response = [
-                'statusCode' => 400,
-                'status' => 'error',
-                'message' => 'An error occurred while fetching the cards'
-            ];
-        }
-        return response()->json($response, $response['statusCode']);
     }
+    return response()->json($response, $response['statusCode']);
+}
+
+
 
 
 

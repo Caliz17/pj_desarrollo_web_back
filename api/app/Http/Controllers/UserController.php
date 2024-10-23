@@ -15,7 +15,7 @@ class UserController extends Controller
 {
     /**
       * @OA\Post(
-      *     path="/api/register",
+      *     path="/api/register-user",
       *     summary="Registra un nuevo usuario",
       *     tags={"Usuarios"},
       *     @OA\RequestBody(
@@ -102,7 +102,7 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/login",
+     *     path="/api/login-user",
      *     summary="Inicia sesión de un usuario",
      *     tags={"Usuarios"},
      *     @OA\RequestBody(
@@ -229,7 +229,7 @@ class UserController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/user/profile",
+     *     path="/api/user-profile",
      *     summary="Obtener el perfil de usuario autenticado",
      *     tags={"Usuarios"},
      *     @OA\Response(
@@ -272,7 +272,7 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/login/google",
+     *     path="/api/login/-google",
      *     summary="Iniciar sesión con Google",
      *     tags={"Usuarios"},
      *     @OA\RequestBody(
