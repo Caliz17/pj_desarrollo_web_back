@@ -2,14 +2,10 @@
     "openapi": "3.0.0",
     "info": {
         "title": "Título de tu API",
-        "description": "Descripción de tu API",
+        "description": "Permite a los desarrolladores gestionar un emocionante entorno de batallas de cartas. Los jugadores pueden crear barajas personalizables, participar en competiciones en tiempo real y subir de nivel para desbloquear nuevas cartas y habilidades. La API ofrece endpoints intuitivos para la gestión de usuarios, barajas y estadísticas, facilitando la integración de la experiencia de juego en diversas aplicaciones.",
         "contact": {
-            "name": "Nombre del Contacto",
-            "email": "contacto@ejemplo.com"
-        },
-        "license": {
-            "name": "Licencia",
-            "url": "http://www.ejemplo.com/licencia"
+            "name": "Isaac Caliz",
+            "email": "ecaliz@miumg.edu.gt"
         },
         "version": "1.0.0"
     },

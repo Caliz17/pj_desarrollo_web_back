@@ -34,7 +34,7 @@
         }
 
         h1 {
-            font-size: 2.8em;
+            font-size: 2.5em;
             margin-bottom: 20px;
             color: #007bff;
         }
@@ -45,12 +45,18 @@
             color: #555;
         }
 
+        .additional-message {
+            font-size: 1em;
+            margin-bottom: 20px;
+            color: #666; /* Color gris más suave */
+        }
+
         .button {
             display: inline-block;
             padding: 15px 30px;
             font-size: 1.2em;
             color: white;
-            background-color: #ff6f61; /* Color vibrante */
+            background-color: #ff6f61;
             text-decoration: none;
             border-radius: 5px;
             transition: background-color 0.3s, transform 0.3s;
@@ -71,8 +77,9 @@
 <body>
 
 <div class="container">
-    <h1><i class="fas fa-rocket"></i> Bienvenido a nuestra API</h1>
+    <h1><i class="fas fa-rocket"></i> ¡Bienvenido a nuestra API!</h1>
     <p>Esta API te permite interactuar con nuestros recursos de manera sencilla y efectiva.</p>
+    <p class="additional-message">¡Prepara tus cartas y compite en el campo de batalla!</p>
     <a class="button" href="{{ url('/api/documentation') }}">
         <i class="fas fa-book-open"></i> Ver Documentación
     </a>
