@@ -62,8 +62,13 @@ class DecksController extends Controller
             'statusCode' => 200
         ];
         try {
-            $deck = Deck::where('user_id', $playerId)->where('id_deck_player', $deckId)->first();
+            $deck = Deck::where('user_id', $playerId)
+                ->where('id_deck_player', $deckId)
+                ->with(['card1', 'card2', 'card3', 'card4', 'card5', 'card6', 'card7', 'card8'])
+                ->first();
+
             if ($deck) {
+                $deck->makeHidden(['id_card_1', 'id_card_2', 'id_card_3', 'id_card_4', 'id_card_5', 'id_card_6', 'id_card_7', 'id_card_8']);
                 $response['deck'] = $deck;
             } else {
                 $response = [
@@ -76,11 +81,13 @@ class DecksController extends Controller
             $response = [
                 'statusCode' => 400,
                 'status' => 'error',
-                'message' => 'An error occurred while fetching the deck'. $e->getMessage()
+                'message' => 'An error occurred while fetching the deck: ' . $e->getMessage()
             ];
         }
         return response()->json($response, $response['statusCode']);
     }
+
+
 
     /**
      * @OA\Post(
